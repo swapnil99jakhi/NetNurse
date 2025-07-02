@@ -1,0 +1,12 @@
+configure bgp routerid {{ router_id }}
+configure bgp AS-number {{ asn }}
+
+{% for peer in bgp_peers %}
+create bgp neighbor {{ peer.ip }} remote-AS-number {{ peer.remote_as }} multi-hop
+configure bgp neighbor {{ peer.ip }} source-interface ipaddress {{ router_id }}
+{% endfor %}
+
+enable bgp
+{% for peer in bgp_peers %}
+enable bgp neighbor {{ peer.ip }}
+{% endfor %}

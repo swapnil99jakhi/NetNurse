@@ -1,0 +1,4 @@
+create vlan loopback0
+enable loopback-mode loopback0
+configure vlan loopback0 ipaddress {{loopback_ip}}/32
+enable ipforwarding vlan loopback0
