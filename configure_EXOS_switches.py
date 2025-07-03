@@ -1,46 +1,55 @@
 from netmiko import ConnectHandler
 from datetime import datetime
+from jinja2 import Environment, FileSystemLoader
+from device_configs import device_configs
 from all_devices import extreme_exos_SW1, extreme_exos_SW2, extreme_exos_SW3, extreme_exos_IGW
-import os
 
 class EXOSDeviceManager:
-    def __init__(self, device_dict):
+    def __init__(self, device_dict, template_data):
         self.device = device_dict
+        self.template_data = template_data
         self.connection = None
         self.name = None
+        self.env = Environment(loader=FileSystemLoader('./Config_templates'))
 
     def connect(self):
         self.connection = ConnectHandler(**self.device)
         self.name = self.connection.find_prompt()[2:5]
 
     def configure_bgp(self):
-        config_file = f'./Configurations/iBGP_{self.name}.txt'
         print(f"Configuring BGP for {self.name}")
-        self._send_config(config_file)
+        self._render_and_send('BGP_template.j2')
 
     def configure_loopback(self):
-        config_file = f'./Configurations/Loopback_{self.name}.txt'
         print(f"Configuring Loopback for {self.name}")
-        self._send_config(config_file)
+        self._render_and_send('Loopback_template.j2')
 
-    def _send_config(self, config_file):
+    def _render_and_send(self, template_name):
         try:
-            if os.path.exists(config_file):
-                self.connection.send_config_from_file(config_file=config_file)
-            else:
-                raise FileNotFoundError
-        except FileNotFoundError:
-            print(f"Error: Config file {config_file} not found.")
+            template = self.env.get_template(template_name)
+            config = template.render(self.template_data)
+            commands = config.strip().splitlines()
+            self.connection.send_config_set(commands)
+        except Exception as e:
+            print(f"Error rendering or sending config: {e}")
 
 def main():
     starttime = datetime.now()
-    devices = [extreme_exos_SW1, extreme_exos_SW2, extreme_exos_SW3, extreme_exos_IGW]
+    devices = {
+        'SW1': extreme_exos_SW1,
+        'SW2': extreme_exos_SW2,
+        'SW3': extreme_exos_SW3,
+        'IGW': extreme_exos_IGW
+    }
 
-    for device in devices:
-        manager = EXOSDeviceManager(device)
-        manager.connect()
-        manager.configure_bgp()
-        manager.configure_loopback()
+    for name, device in devices.items():
+        if name in device_configs:
+            manager = EXOSDeviceManager(device, device_configs[name])
+            manager.connect()
+            manager.configure_bgp()
+            manager.configure_loopback()
+        else:
+            print(f"No config found for {name}")
 
     print(f"Time Elapsed = {datetime.now() - starttime}")
 
