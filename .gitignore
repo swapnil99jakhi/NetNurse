@@ -1,0 +1,6 @@
+# Ignore Prometheus runtime & binaries
+prometheus/data/
+prometheus/*.exe
+
+# Ignore SNMP exporter binaries
+snmp_exporter/*.exe

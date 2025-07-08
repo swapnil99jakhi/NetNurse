@@ -23,6 +23,10 @@ class EXOSDeviceManager:
     def configure_loopback(self):
         print(f"Configuring Loopback for {self.name}")
         self._render_and_send('Loopback_template.j2')
+    
+    def configure_snmp(self):
+        print(f"Configuring SNMP access for {self.name}")
+        self._render_and_send('SNMP_template.j2')
 
     def _render_and_send(self, template_name):
         try:
@@ -46,8 +50,7 @@ def main():
         if name in device_configs:
             manager = EXOSDeviceManager(device, device_configs[name])
             manager.connect()
-            manager.configure_bgp()
-            manager.configure_loopback()
+            manager.configure_snmp()
         else:
             print(f"No config found for {name}")
 

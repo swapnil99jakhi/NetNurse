@@ -7,7 +7,9 @@ device_configs = {
             {'ip': '3.3.3.3', 'remote_as': 100},
             {'ip': '4.4.4.4', 'remote_as': 200}
         ],
-        'loopback_ip': '1.1.1.1'
+        'loopback_ip': '1.1.1.1',
+        'snmp_community_name': 'SW1'
+
     },
     'SW2': {
         'asn': 100,
@@ -16,7 +18,8 @@ device_configs = {
             {'ip': '1.1.1.1', 'remote_as': 100},
             {'ip': '3.3.3.3', 'remote_as': 100}
         ],
-        'loopback_ip': '2.2.2.2'
+        'loopback_ip': '2.2.2.2',
+        'snmp_community_name': 'SW2'
     },
     'SW3': {
         'asn': 100,
@@ -26,7 +29,8 @@ device_configs = {
             {'ip': '2.2.2.2', 'remote_as': 100},
             {'ip': '4.4.4.4', 'remote_as': 200}
         ],
-        'loopback_ip': '3.3.3.3'
+        'loopback_ip': '3.3.3.3',
+        'snmp_community_name': 'SW3'
     },
     'IGW': {
         'asn': 200,
@@ -35,6 +39,7 @@ device_configs = {
             {'ip': '1.1.1.1', 'remote_as': 100},
             {'ip': '3.3.3.3', 'remote_as': 100},
         ],
-        'loopback_ip': '4.4.4.4'
+        'loopback_ip': '4.4.4.4',
+        'snmp_community_name': 'IGW'
     }
 }
